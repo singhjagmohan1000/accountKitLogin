@@ -31,7 +31,9 @@ export const LoginPage = () => (
             {({ isSubmitting, status }) => (
                 <Form id="form-contact" noValidate>
                     <div className="comment-form row">
-                        <div className="col-md-8">
+                        <div className="col-md-4">
+                        </div>
+                        <div className="col-md-4">
                             <div className="form-group">
                                 <label className="contact-label" htmlFor="phoneNumber">
                                     Phone Number:<span className="required">*</span>
@@ -45,24 +47,19 @@ export const LoginPage = () => (
                                 />
                                 <ErrorMessage className="required" name="phoneNumber" component="div" />
                             </div>
-                        </div>
-                       
-                      
-                        <div className="col-md-12">
-                           
-    
-                            <button
-                                className="btn contact-btn"
+                         <button
+                                className="btn contact-btn btn-success"
                                 type="submit"
                                 disabled={isSubmitting}
                             >
                                 Login
               </button>
-                            <div>{status ? status.success ? <div className="alert alert-success col-md-4" role="alert">{status.success}</div>
-                                : <div className="alert alert-danger col-md-4" role="alert">{status.failed}</div> : ''}</div>
+                            <div>{status ? status.success ? <div className="alert alert-success " role="alert">{status.success}</div>
+                                : <div className="alert alert-danger " role="alert">{status.failed}</div> : ''}</div>
 
                         </div>
-                    </div>
+                        </div>
+                    
                 </Form>
             )}
         </Formik>
