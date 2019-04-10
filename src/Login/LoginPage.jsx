@@ -1,67 +1,66 @@
 
 import React from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
-export const LoginPage = () => (
-    <div>
-     
-   <Formik
-            initialValues={{
-                phoneNumber: ""
-            }}
-            validate={values => {
-                let errors = {};
-            
-            if (!values.phoneNumber) {
-                errors.phoneNumber = "Please, Enter Your Mobile Number";
-                } else if (
-                !/^\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/i.test(values.phoneNumber)
-                ) {
-                    errors.phoneNumber = "Invalid phonenumber";
-                }
-                return errors;
-            }}
-            onSubmit={(values, { setSubmitting, setStatus }) => {
-                setTimeout(() => {
-                 alert(values.phoneNumber)
+window.AccountKit_OnInteractive = function () {
+    window.AccountKit.init(
+        {
+            appId: "{{appID}}",
+            state: "{{state}}",
+            version: "{{version}}",
+            fbAppEventsEnabled: true,
+            redirect: "{{redirecturl}}"
+        }
+    );
+};
 
-                }, 400);
-            }}
-        >
-            {({ isSubmitting, status }) => (
-                <Form id="form-contact" noValidate>
-                    <div className="comment-form row">
-                        <div className="col-md-4">
-                        </div>
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label className="contact-label" htmlFor="phoneNumber">
-                                    Phone Number:<span className="required">*</span>
-                                </label>
-                                <Field
-                                    type="text"
-                                    id="phoneNumber"
-                                    className="form-control"
-                                    name="phoneNumber"
-                                    placeholder="Mobile Number"
-                                />
-                                <ErrorMessage className="required" name="phoneNumber" component="div" />
-                            </div>
-                         <button
-                                className="btn contact-btn btn-success"
-                                type="submit"
-                                disabled={isSubmitting}
-                            >
-                                Login
-              </button>
-                            <div>{status ? status.success ? <div className="alert alert-success " role="alert">{status.success}</div>
-                                : <div className="alert alert-danger " role="alert">{status.failed}</div> : ''}</div>
+export class LoginPage extends React.Component {
+    constructor(props){
+        super(props);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+   handleSubmit(event){
+       event.preventDefault();
+       alert("Hello")
+       window.AccountKit.login(
+           'PHONE',
+           { },
+           loginCallback
+       );
+       function loginCallback(response) {
+           if (response.status === "PARTIALLY_AUTHENTICATED") {
+               var code = response.code;
+               var csrf = response.state;
+               
+               axios.post(`http://localhost:5000/api/userLogin`, { code: code,csrf:csrf })
+                   .then((res) => {
+                       alert(res.data)
+                   }).catch((err) => {
+                       alert(err)
+                       console.log(err)
+                       
+                   });
+           }
+           else if (response.status === "NOT_AUTHENTICATED") {
+             
+               alert("NOT_AUTHENTICATED")
+           }
+           else if (response.status === "BAD_PARAMS") {
+               alert("BAD_PARAMS")
+           }
+       }
 
-                        </div>
-                        </div>
-                    
-                </Form>
-            )}
-        </Formik>
-    </div>
-);
+   }
+    render(){
+        return(<div className="container">
+           
+      <div className="row">
+        <div className="col-md-4"></div>
+        <div className="col-md-4">
+                    <form onSubmit={this.handleSubmit}> <button className="btn btn-success" >Login With SMS</button></form>
+                   
+        </div>
+        
+      </div>
+        </div>)
+    }
+}
